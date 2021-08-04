@@ -5,7 +5,7 @@ const Menu: VFC = () => {
   return (
     <div className="container" style={{paddingTop: "40px"}}>
       <div className="row">
-        <ul className="nine columns">
+        <ul className="nine columns" style={{ float: "none", margin: "auto" }}>
           <li>
             <Link href="/">Loging</Link>
           </li>

@@ -23,7 +23,7 @@ const Latest = () => {
   return (
     <div className="container">
       <div className="row">
-        <div className="nine columns">
+        <div className="nine columns" style={{ float: "none", margin: "auto" }}>
           <Header />
           <h1>Latest</h1>
           <table className="u-full-width">

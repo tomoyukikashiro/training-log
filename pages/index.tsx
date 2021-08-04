@@ -43,7 +43,7 @@ export default function Home() {
       </Head>
       <div className="container">
         <div className="row">
-          <div className="nine columns">
+          <div className="nine columns" style={{ float: "none", margin: "auto" }}>
             <Header />
             <h1>Logging</h1>
             <main>
