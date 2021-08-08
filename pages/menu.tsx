@@ -15,6 +15,9 @@ const Menu: VFC = () => {
           <li>
             <Link href="/summary">Summary</Link>
           </li>
+          <li>
+            <Link href="/settings">Settings</Link>
+          </li>
         </ul>
       </div>
     </div>

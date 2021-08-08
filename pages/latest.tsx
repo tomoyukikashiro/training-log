@@ -13,6 +13,7 @@ const Latest = () => {
   useEffect(() => {
     const fetch = async () => {
       const date = await recentDate()
+      if (!date) return
       setDate(date)
       const data = await db.logs.where({date}).toArray() as LogTable[]
       setLogs(data)

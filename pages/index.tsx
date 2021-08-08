@@ -1,12 +1,13 @@
 import Head from 'next/head'
 
-import { TRAININGS } from '../lib/constants'
-import {LogTable, db} from '../lib/db'
-import {ChangeEvent, FormEvent, useCallback, useState} from "react";
+import {LogTable, db, TrainingTable} from '../lib/db'
+import {ChangeEvent, FormEvent, useCallback, useEffect, useState} from "react";
 import Header from "../components/Header";
+import {CATEGORY} from "./settings";
 
 export default function Home() {
-  const [training, setTraining] = useState<string>(TRAININGS[0].value)
+  const [trainingData, setTrainingData] = useState<Array<[string, TrainingTable[]]>>([])
+  const [training, setTraining] = useState<string>('')
   const onChangeTraining = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
     setTraining(e.target.value)
   }, [setTraining])
@@ -34,6 +35,22 @@ export default function Home() {
     e.preventDefault()
     save()
   }, [training, weight, count])
+
+  useEffect(() => {
+    const fetch = async () => {
+      const groupBy: [string, TrainingTable[]][] = []
+      const data = await db.trainings.toArray()
+      CATEGORY.forEach(category => {
+        // @ts-ignore
+        const unique = [...new Set(data.filter((t: TrainingTable)=> t.category === category))]
+        groupBy.push([category, unique])
+      })
+      setTrainingData(groupBy)
+      setTraining(groupBy[0][1][0]?.name || '')
+    }
+    fetch()
+  }, [])
+
   return (
     <div>
       <Head>
@@ -49,8 +66,12 @@ export default function Home() {
             <main>
               <form onSubmit={onSubmit}>
                 <select onChange={onChangeTraining} value={training} className="u-full-width">
-                  { TRAININGS.map((t, i) => (
-                    <option key={t.value} value={t.value}>{t.name}</option>
+                  { trainingData.map((t, i) => (
+                    <optgroup label={t[0]} key={t[0]}>
+                      {t[1].map((tt) => (
+                        <option value={tt.name} key={tt.id}>{tt.name}</option>
+                      ))}
+                    </optgroup>
                   )) }
                 </select>
                 <label>

@@ -1,6 +1,6 @@
 import Dexie from 'dexie';
 
-interface Scheme {
+interface LogScheme {
   id?: number,
   training: string,
   weight: number,
@@ -8,21 +8,32 @@ interface Scheme {
   date: Date
 }
 
+interface TrainingScheme {
+  id?: number,
+  category: string,
+  name: string,
+}
+
 class Database extends Dexie {
   // Declare implicit table properties.
   // (just to inform Typescript. Instanciated by Dexie in stores() method)
-  logs: Dexie.Table<Scheme, number>; // number = type of the primkey
+  logs: Dexie.Table<LogScheme, number>; // number = type of the primkey
   //...other tables goes here...
+  trainings: Dexie.Table<TrainingScheme, number>; // number = type of the primkey
 
   constructor () {
     super("Database");
     this.version(1).stores({
       logs: '++id, training, weight, count, date',
+      trainings: '++id, category, name',
     });
     // The following line is needed if your typescript
     // is compiled using babel instead of tsc:
     this.logs = this.table("logs");
     this.logs.mapToClass(LogTable)
+
+    this.trainings = this.table("trainings")
+    this.trainings.mapToClass(TrainingTable)
   }
 }
 
@@ -50,6 +61,21 @@ export class LogTable {
   save() {
     return db.transaction('rw', db.logs, async () => {
       this.id = await db.logs.put(this)
+    })
+  }
+}
+
+export class TrainingTable {
+  constructor(
+    public category: string,
+    public name: string,
+    public id?: number
+  ) {
+  }
+
+  save() {
+    return db.transaction('rw', db.trainings, async () => {
+      this.id = await db.trainings.put(this)
     })
   }
 }
